@@ -399,7 +399,9 @@
         "nodes": {
             "transform-text": {
                 "name": "transform-text",
-                "types": [],
+                "types": [
+                    "transform-text"
+                ],
                 "enabled": true,
                 "local": true,
                 "module": "node-red-contrib-crm",
