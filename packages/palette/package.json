@@ -24,7 +24,9 @@
       "whois-lookup": "./dist/nodes/whois-lookup/whois-lookup.js"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.0.0",
     "@types/express": "^4.17.9",
@@ -67,4 +69,3 @@
     ]
   }
 }
-
