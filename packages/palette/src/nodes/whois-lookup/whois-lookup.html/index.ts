@@ -4,13 +4,14 @@ import { WhoisLookupEditorNodeProperties } from "./modules/types";
 declare const RED: EditorRED;
 
 RED.nodes.registerType<WhoisLookupEditorNodeProperties>("whois-lookup", {
-  category: "function",
+  category: "CRM Utils",
   color: "#a6bbcf",
   defaults: {
     name: { value: "" },
+    apiKey: { value: "", required: true },
   },
   inputs: 1,
-  outputs: 1,
+  outputs: 2,
   icon: "file.png",
   paletteLabel: "whois lookup",
   label: function () {
