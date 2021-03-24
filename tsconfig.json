@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@backstage/pkg-boilerplate": ["pkg-boilerplate/src"],
+      "@backstage/*": ["*/src"]
+    },
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "strictNullChecks": true
+  }
+}

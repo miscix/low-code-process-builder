@@ -1,0 +1,9 @@
+{
+  "name": "@pb/server",
+  "description": "A Node-RED Project",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "node-red-contrib-crm": "*"
+  }
+}

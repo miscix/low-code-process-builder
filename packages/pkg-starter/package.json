@@ -1,0 +1,23 @@
+{
+  "name": "@pb/pkg-starter",
+  "version": "0.0.1",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "npm run clean && npm run compile",
+    "clean": "rm -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json",
+    "compile:watch": "tsc --build tsconfig.build.json --listFiles --watch"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.3",
+    "typescript": "^4.2.3"
+  }
+}
