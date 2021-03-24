@@ -20,7 +20,8 @@
   "license": "MIT",
   "node-red": {
     "nodes": {
-      "transform-text": "./dist/nodes/transform-text/transform-text.js"
+      "transform-text": "./dist/nodes/transform-text/transform-text.js",
+      "whois-lookup": "./dist/nodes/whois-lookup/whois-lookup.js"
     }
   },
   "dependencies": {},
