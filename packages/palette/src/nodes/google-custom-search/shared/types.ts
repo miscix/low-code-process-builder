@@ -1,3 +1,4 @@
 export interface GoogleCustomSearchOptions {
-  // node options
+  apiKey: string;
+  searchEngineId: string;
 }
