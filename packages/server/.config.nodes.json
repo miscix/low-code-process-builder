@@ -416,6 +416,16 @@
                 "local": true,
                 "module": "node-red-contrib-crm",
                 "file": "/home/mushegha/Projects/process-builder/packages/server/node_modules/node-red-contrib-crm/dist/nodes/whois-lookup/whois-lookup.js"
+            },
+            "google-custom-search": {
+                "name": "google-custom-search",
+                "types": [
+                    "google-custom-search"
+                ],
+                "enabled": true,
+                "local": true,
+                "module": "node-red-contrib-crm",
+                "file": "/home/mushegha/Projects/process-builder/packages/server/node_modules/node-red-contrib-crm/dist/nodes/google-custom-search/google-custom-search.js"
             }
         }
     }

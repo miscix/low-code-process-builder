@@ -406,6 +406,16 @@
                 "local": true,
                 "module": "node-red-contrib-crm",
                 "file": "/home/mushegha/Projects/process-builder/packages/server/node_modules/node-red-contrib-crm/dist/nodes/transform-text/transform-text.js"
+            },
+            "whois-lookup": {
+                "name": "whois-lookup",
+                "types": [
+                    "whois-lookup"
+                ],
+                "enabled": true,
+                "local": true,
+                "module": "node-red-contrib-crm",
+                "file": "/home/mushegha/Projects/process-builder/packages/server/node_modules/node-red-contrib-crm/dist/nodes/whois-lookup/whois-lookup.js"
             }
         }
     }
