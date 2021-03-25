@@ -26,6 +26,8 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "chrome-launcher": "^0.13.4",
+    "lighthouse": "^7.3.0",
     "micro": "^9.3.4"
   }
 }
