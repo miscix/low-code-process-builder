@@ -5,11 +5,6 @@ export const resultSelector = "#search a[onmousedown], #search a[ping]";
 
 export const queryTypingDelay = 100; // mspk
 
-export interface SearchOptions {
-  query: string;
-  limit: number;
-}
-
 export interface CompleteResult {
   resultType: "complete";
   title: string;
@@ -25,8 +20,8 @@ export const isCompleteResult = (
   value: SearchResult
 ): value is CompleteResult => value.resultType === "complete";
 
-type ScrapResults = (page: Page, limit: number) => Promise<SearchResult[]>;
-export const scrapResults: ScrapResults = async (page, limit) => {
+type ScrapResults = (page: Page, limit?: number) => Promise<SearchResult[]>;
+export const scrapResults: ScrapResults = async (page, limit = 10) => {
   const allLinks: SearchResult[] = [];
 
   async function scrapNextBatch() {

@@ -10,18 +10,14 @@ export const baseUrl = "https://www.google.com";
 
 export const runnerArgs = ["--no-sandbox", "--disable-setuid-sandbox"];
 
-export interface RunnerOptions {
-  geolocation: GeolocationOptions;
-}
-
 export interface RunnerTopo {
   browser: Browser;
   browserContext: BrowserContext;
   page: Page;
 }
 
-type BuildTopo = (options: RunnerOptions) => Promise<RunnerTopo>;
-export const initRunnerTopo: BuildTopo = async (options) => {
+type BuildTopo = (geolocation?: GeolocationOptions) => Promise<RunnerTopo>;
+export const initRunnerTopo: BuildTopo = async (geolocation) => {
   const browser = await launch({ args: runnerArgs });
 
   const browserContext = await browser.createIncognitoBrowserContext();
@@ -30,7 +26,9 @@ export const initRunnerTopo: BuildTopo = async (options) => {
 
   const page = await browserContext.newPage();
   await page.setViewport({ width: 1280, height: 1280 });
-  await page.setGeolocation(options.geolocation);
+  if (geolocation) {
+    await page.setGeolocation(geolocation);
+  }
   await page.goto(baseUrl);
 
   return { browser, browserContext, page };

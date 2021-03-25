@@ -1,18 +1,9 @@
-import { initRunnerTopo, dropRunnerTopo, RunnerOptions } from "./runner";
-import {
-  scrapResults,
-  SearchOptions,
-  SearchResult,
-  submitSearch,
-} from "./search";
+import { json } from "micro";
+import { IncomingMessage } from "node:http";
 
-type FullOptions = RunnerOptions & SearchOptions;
+import { search, SearchParams } from "./module";
 
-type LocationBasedSearch = (params: FullOptions) => Promise<SearchResult[]>;
-export const search: LocationBasedSearch = async (params) => {
-  const topo = await initRunnerTopo(params);
-  await submitSearch(topo.page, params.query);
-  const results = await scrapResults(topo.page, params.limit);
-  await dropRunnerTopo(topo);
-  return results;
-};
+export default async function (req: IncomingMessage) {
+  const data = (await json(req)) as SearchParams;
+  return search(data);
+}
