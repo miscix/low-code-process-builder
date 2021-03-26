@@ -1,17 +1,38 @@
-import { GeolocationOptions as GeoCoordinates } from "puppeteer";
+import { Record, String, Number, Static, Partial, Array } from "runtypes";
+import v from "validator";
 
 export { Browser, Page } from "puppeteer";
 
-export type SearchParams = {
-  query: string;
-  limit?: number;
-  geolocation?: GeoCoordinates;
-};
+export const Url = String.withConstraint(v.isURL);
+export type Url = Static<typeof Url>;
 
-export interface SearchResult {
-  title: string;
-  url: string;
-}
+export const NaturalNumber = Number.withConstraint(
+  (x) => Math.floor(x) === x
+).withConstraint((x) => x > 0);
 
-export const isSearchResult = (x: Partial<SearchResult>): x is SearchResult =>
-  typeof x.url === "string" && typeof x.title === "string";
+export const GeoCoordinates = Record({
+  latitude: Number,
+  longitude: Number,
+});
+export type GeoCoordinates = Static<typeof GeoCoordinates>;
+
+export const SearchParams = Record({
+  query: String,
+}).And(
+  Partial({
+    limit: NaturalNumber,
+    geolocation: GeoCoordinates,
+  })
+);
+export type SearchParams = Static<typeof SearchParams>;
+
+export const SearchResultItem = Record({
+  title: String,
+  link: Url,
+});
+export type SearchResultItem = Static<typeof SearchResultItem>;
+
+export const SearchResult = Record({
+  items: Array(SearchResultItem),
+});
+export type SearchResult = Static<typeof SearchResult>;

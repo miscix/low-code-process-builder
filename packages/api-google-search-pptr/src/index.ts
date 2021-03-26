@@ -1,6 +1,6 @@
 import { json } from "micro";
 import { launch } from "puppeteer";
-import { IncomingMessage } from "node:http";
+import { IncomingMessage } from "http";
 
 import { SearchAgent, SearchParams } from "./module";
 
@@ -10,7 +10,8 @@ const promisedBrowser = launch({
 
 export default async function (req: IncomingMessage) {
   const browser = await promisedBrowser;
-  const agent = new SearchAgent(browser);
-  const params = (await json(req)) as SearchParams;
-  return agent.search(params);
+
+  return json(req)
+    .then(SearchParams.check)
+    .then((params) => new SearchAgent(browser).search(params));
 }

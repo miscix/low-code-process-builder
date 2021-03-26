@@ -1,95 +1,85 @@
-import { isSearchResult, Page, SearchResult } from "./models";
-import {
-  defaultSearchResultLimit,
-  queryTypingDelay,
-  searchInputSelector,
-  searchResultSelector,
-} from "./config";
+import { Page, SearchResultItem } from "./models";
 
-type SearchSubmitter = (page: Page, query: string) => Promise<void>;
-export const submitSearch: SearchSubmitter = async (page, query) => {
+//
+
+export const searchInputSelector = "form[action='/search'] input[type='text']";
+export const searchResultSelector = "#search a[onmousedown], #search a[ping]";
+export const nextPageLinkSelector = "#pnnext";
+
+//
+
+const randomAround = (n: number): number =>
+  Math.random() * n + (0.5 - Math.random()) * (n / 2);
+
+const concat = <T>(arr1: T[]) => (arr2: T[]): T[] => [...arr1, ...arr2];
+
+//
+
+export const submitSearch = async (page: Page, query: string) => {
   console.log("Waiting for the input");
-  await page.waitForTimeout(2000);
   await page.waitForSelector(searchInputSelector);
 
   console.log("Typing the search term");
-  await page.type(searchInputSelector, query, { delay: queryTypingDelay }); // Types slower, like a user
+  await page.type(searchInputSelector, query, { delay: randomAround(100) }); // Types slower, like a user
 
   await Promise.all([
     page.waitForNavigation({
       waitUntil: "networkidle0",
     }),
-    await page.keyboard.press("Enter"),
+    page.keyboard.press("Enter"),
   ]);
-  await page.waitForTimeout(100);
-
-  // console.log("Waiting for the response");
-  //await page.waitForResponse(res => {
-  //    return res.url().includes("/search")
-  //})
 };
 
-type ResultLoader = (page: Page, limit?: number) => Promise<SearchResult[]>;
-export const acquireResults: ResultLoader = async (
-  page,
-  limit = defaultSearchResultLimit
-) => {
-  const allResults: SearchResult[] = [];
+const parseResults = async (page: Page): Promise<SearchResultItem[]> => {
+  console.log("Parsing the page results");
 
-  const parseResults = async (): Promise<SearchResult[]> => {
-    await page.waitForSelector(searchResultSelector);
+  const items: unknown[] = await page.evaluate((itemSelector: string) => {
+    const selection = document.querySelectorAll(itemSelector);
 
-    const results = await page.evaluate(function (itemSelector: string) {
-      const selection = document.querySelectorAll(itemSelector);
-      const arr: Element[] = [].slice.apply(selection);
+    const parseOne = (el: Element) => {
+      const titleHolder = el.querySelector("h3") || { textContent: null };
 
-      const parseOne = (el: Element): Partial<SearchResult> => {
-        const titleHolder = el.querySelector("h3") || { textContent: null };
-        const title = titleHolder.textContent || undefined;
-        const url = el.getAttribute("href") || undefined;
+      const title = titleHolder.textContent;
+      const link = el.getAttribute("href");
 
-        return { title, url };
-      };
-      return arr.map(parseOne);
-    }, searchResultSelector);
+      return { title, link };
+    };
 
-    return results.filter(isSearchResult);
-  };
+    return [].slice.apply(selection).map(parseOne);
+  }, searchResultSelector);
 
-  async function scrapNextBatch() {
-    console.log("Random timeout");
-    await page.waitForTimeout(Math.floor(1000 + Math.random() * 2000));
-    // await saveHtmlAndImg(++nextIndex);
-    console.log("Waiting for the page results");
-    console.log("Parsing the page results");
+  return items.filter(SearchResultItem.guard);
+};
 
-    const newLinks = await parseResults();
+export const acquireResults = async (page: Page, limit: number) => {
+  let items: SearchResultItem[] = [];
+  let hasNext: boolean = true;
 
-    allResults.push.apply(allResults, newLinks);
-    if (allResults.length > limit) {
-      return allResults;
-    }
-
-    const existsNext = await page.$("#pnnext");
-    if (!existsNext) {
-      return allResults;
-    }
-
-    console.log("Random timeout");
-    await page.waitForTimeout(Math.floor(1000 + Math.random() * 2000));
-    console.log("Going to the next page");
-    await Promise.all([
-      page.waitForNavigation({
-        waitUntil: "networkidle0",
-      }),
-      await page.click("#pnnext", { delay: 20 }),
-    ]);
-    await scrapNextBatch();
-
-    return [];
+  while (items.length < limit && hasNext) {
+    items = await parseResults(page).then(concat(items));
+    hasNext = await openNext(page);
   }
 
-  await scrapNextBatch();
+  return items.slice(0, limit);
+};
 
-  return allResults.slice(0, limit);
+const openNext = async (page: Page): Promise<boolean> => {
+  const existsNext = await page.$(nextPageLinkSelector);
+
+  if (!existsNext) return false;
+
+  console.log("Random timeout");
+  await page.waitForTimeout(randomAround(500));
+
+  await Promise.all([
+    page.waitForNavigation({
+      waitUntil: "networkidle0",
+    }),
+    page.click(nextPageLinkSelector, { delay: 20 }),
+  ]);
+
+  console.log("Waiting for the page results");
+  await page.waitForSelector(searchResultSelector);
+
+  return true;
 };

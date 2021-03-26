@@ -1,5 +1,5 @@
-import { Browser, Page, SearchParams, SearchResult } from "./models";
-import { baseUrl } from "./config";
+import { Browser, SearchParams, Page, SearchResult } from "./models";
+import { baseUrl, defaultSearchResultLimit } from "./config";
 import { acquireResults, submitSearch } from "./helpers";
 
 export class SearchAgent {
@@ -21,7 +21,7 @@ export class SearchAgent {
     return browserContext.newPage();
   }
 
-  public async search(params: SearchParams): Promise<SearchResult[]> {
+  public async search(params: SearchParams): Promise<SearchResult> {
     const page = await this.createBlankPage();
     if (params.geolocation) {
       await page.setGeolocation(params.geolocation);
@@ -29,12 +29,15 @@ export class SearchAgent {
     await page.goto(SearchAgent.baseUrl);
 
     await submitSearch(page, params.query);
-    const results = await acquireResults(page, params.limit);
+    const items = await acquireResults(
+      page,
+      params.limit || defaultSearchResultLimit
+    );
 
     const browserContext = page.browserContext();
     await page.close();
     await browserContext.close();
 
-    return results;
+    return { items };
   }
 }

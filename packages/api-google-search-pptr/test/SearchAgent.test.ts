@@ -1,12 +1,12 @@
 import { Browser, launch } from "puppeteer";
 
-import { SearchAgent, SearchParams } from "../src/module";
+import { SearchParams, SearchAgent } from "../src/module";
 
 describe("SearchAgent", () => {
   let browser: Browser;
   let agent: SearchAgent;
 
-  const testSearchParams: SearchParams = {
+  const testInputParams: SearchParams = {
     query: "Mozart",
     limit: 5,
     geolocation: {
@@ -25,8 +25,8 @@ describe("SearchAgent", () => {
 
   describe("search", () => {
     it("should return array of results", async () => {
-      const result = await agent.search(testSearchParams);
-      expect(result).toHaveLength(testSearchParams.limit as number);
+      const result = await agent.search(testInputParams);
+      expect(result.items).toHaveLength(testInputParams.limit as number);
     });
   });
 });
