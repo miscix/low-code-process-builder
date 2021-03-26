@@ -1,23 +1,27 @@
 import { Browser, launch } from "puppeteer";
 
-import { SearchParams, SearchAgent } from "../src/module";
+import { SearchParams } from "../src/search/models";
+import { SearchAgent, AgentOptions } from "../src/search/SearchAgent";
+
+const testAgentOptions: Partial<AgentOptions> = {
+  geolocation: {
+    latitude: 44.4,
+    longitude: 44.4,
+  },
+};
+
+const testInputParams: SearchParams = {
+  query: "Mozart",
+  limit: 5,
+};
 
 describe("SearchAgent", () => {
   let browser: Browser;
   let agent: SearchAgent;
 
-  const testInputParams: SearchParams = {
-    query: "Mozart",
-    limit: 5,
-    geolocation: {
-      latitude: 44.4,
-      longitude: 44.4,
-    },
-  };
-
   beforeEach(async () => {
     browser = await launch();
-    agent = new SearchAgent(browser);
+    agent = new SearchAgent(browser, testAgentOptions);
   });
   afterEach(async () => {
     browser.close();
