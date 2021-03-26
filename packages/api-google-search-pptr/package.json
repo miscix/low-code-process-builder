@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "micro": "^9.3.4",
-    "puppeteer": "^8.0.0"
+    "puppeteer": "^8.0.0",
+    "runtypes": "^5.1.0"
   }
 }
