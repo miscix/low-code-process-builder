@@ -1,5 +1,5 @@
 {
-  "name": "@pb/server",
+  "name": "@pb/red-server",
   "description": "A Node-RED Project",
   "version": "0.0.1",
   "private": true,
